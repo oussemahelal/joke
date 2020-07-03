@@ -2,8 +2,9 @@
 ini_set('display_errors', 1);
 try {
     include_once __DIR__ . '/include/databaseconnection.php';
-    include_once __DIR__ . '/include/databasefunction.php';
-    delete($pdo, 'joke', 'id', $_POST['id']);
+    include __DIR__ . '/classes/DatabaseTable.php';
+    $jokesTable = new DatabaseTable($pdo, 'joke', 'id');
+    $jokesTable-> delete($_POST['id']);
     header('location: jokes.php');
 } catch (PDOException $e) {
     $title = 'An error has occurred';

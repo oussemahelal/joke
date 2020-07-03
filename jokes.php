@@ -2,11 +2,13 @@
 ini_set('display_errors', 1);
 try {
     include __DIR__ . '/include/databaseconnection.php';
-    include __DIR__ . '/include/databasefunction.php';
-    $result = findAll($pdo, 'joke');
+    include __DIR__ . '/Classes/DatabaseTable.php';
+    $jokesTable = new DatabaseTable($pdo, 'joke', 'id');
+    $authorsTable = new DatabaseTable($pdo, 'author', 'id');
+    $result = $jokesTable-> findAll();
     $jokes = [];
     foreach ($result as $joke) {
-        $author = findById($pdo, 'author', 'id', $joke['authorid']);
+        $author = $authorsTable-> findById($joke['authorid']);
         $jokes[] = [
             'id' => $joke['id'],
             'joketext' => $joke['joketext'],
@@ -16,7 +18,7 @@ try {
         ];
     }
     $title = 'Joke list';
-    $totalJokes = total($pdo, 'joke');
+    $totalJokes = $jokesTable-> total();
     ob_start();
     include
         __DIR__ . '/jokes.html.php';

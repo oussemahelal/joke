@@ -1,20 +1,18 @@
 <?php
 ini_set('display_errors', 1);
-include_once __DIR__ . '/include/databaseconnection.php';
-include_once __DIR__ . '/include/databasefunction.php';
 try {
-    if (isset($_POST['joketext']) && $_POST['joketext'] != null) {
-        save($pdo, 'joke', 'id', [
-            'id' => $_POST['jokeid'],
-            'joketext' => $_POST['joketext'],
-            'jokedate' => new DateTime(),
-            'authorId' => 1
-        ]);
+    include_once __DIR__ . '/include/databaseconnection.php';
+    include __DIR__ . '/classes/DatabaseTable.php';
+    $jokesTable = new DatabaseTable($pdo, 'joke', 'id');
+    if (isset($_POST['joketext']) && $_POST['joketext'] != null) { 
+        $joke =$_POST['joke'];
+        $joke['jokedate'] = new DateTime();
+        $joke['authorid'] = 1;
+        $jokesTable-> save($joke);
         header('location: jokes.php');
-        //update($pdo,'joke','id',['id'=> $_POST['id'],'joketext'=> $_POST['joketext'],'authorid' => 1]);
     } else {
         if (isset($_GET['id'])) {
-            $joke = findById($pdo, 'joke', 'id', $_GET['id']);
+            $joke =$jokesTable-> findById($_GET['id']);
         }
 
         $title = 'Edite joke';
