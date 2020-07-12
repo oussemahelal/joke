@@ -1,6 +1,10 @@
 <?php
 
-class JokeController
+namespace Ijdb\Controllers;
+
+use \Ninja\DatabaseTable;
+
+class Joke
 {
     private $authorsTable;
     private $jokesTable;
@@ -9,14 +13,11 @@ class JokeController
         $this->jokesTable = $jokesTable;
         $this->authorsTable = $authorsTable;
     }
+
     public function home()
     {
         $title = 'Internet Joke Database';
-        ob_start();
-        include
-            __DIR__ . '/../home.html.php';
-        $output = ob_get_clean();
-        return ['output' => $output, 'title' => $title];
+        return ['template' => 'home.html.php', 'title' => $title];
     }
     public function list()
     {
@@ -35,36 +36,39 @@ class JokeController
         }
         $title = 'Joke list';
         $totalJokes = $this->jokesTable->total();
-        ob_start();
-        include
-            __DIR__ . '/../jokes.html.php';
-        $output = ob_get_clean();
-        return ['output' => $output, 'title' => $title];
+        return [
+            'template' => 'jokes.html.php',
+            'title' => $title,
+            'variables' => [
+                'totalJokes' => $totalJokes,
+                'jokes' => $jokes
+            ]
+        ];
     }
-    public function edit() {
-        if (isset($_POST['joketext'])) {
-        $joke['joketext']= $_POST['joketext'];
-        $joke['jokedate'] = new DateTime();
+    public function saveEdit()
+    {
+        $joke['joketext'] = $_POST['joketext'];
+        $joke['jokedate'] = new \DateTime();
+        $joke['id'] = $_POST['jokeid'];
         $joke['authorid'] = 1;
-       
         $this->jokesTable->save($joke);
-        header('location: index.php?action=list');
-        }
-        else {
+        header('location: /joke/list');
+    }
+    public function edit()
+    {
         if (isset($_GET['id'])) {
-        $joke = $this->jokesTable->findById($_GET['id']);
+            $joke = $this->jokesTable->findById($_GET['id']);
         }
         $title = 'Edit joke';
-        ob_start();
-include
-__DIR__ . '/../editjoke.html.php';
-$output = ob_get_clean();
-return ['output' => $output, 'title' => $title];
-}
-}
+        return [
+            'template' => 'editjoke.html.php',
+            'title' => $title,
+            'variables' => ['joke' => $joke ?? null]
+        ];
+    }
     public function delete()
     {
         $this->jokesTable->delete($_POST['id']);
-        header('location: index.php?action=list');
+        header('location: /joke/list');
     }
 }

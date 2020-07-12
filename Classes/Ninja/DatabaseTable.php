@@ -1,10 +1,13 @@
 <?php
+
+namespace Ninja;
+
 class DatabaseTable
 {
     private $pdo;
     private $table;
     private $primaryKey;
-    public function __construct(PDO $pdo, string $table, string $primaryKey)
+    public function __construct(\PDO $pdo, string $table, string $primaryKey)
     {
         $this->pdo = $pdo;
         $this->table = $table;
@@ -25,13 +28,22 @@ class DatabaseTable
     }
     public function findById($value)
     {
-        $query = 'SELECT * FROM `' . $this->table . '` WHERE
-`' . $this->primaryKey . '` = :value';
+        $query = 'SELECT * FROM `' . $this->table . '` WHERE `' . $this->primaryKey . '` = :primaryKey';
+        $parameters = [
+            'primaryKey' => $value
+        ];
+        $query = $this->query($query, $parameters);
+        return $query->fetch();
+    }
+    public function find($column, $value)
+    {
+        $query = 'SELECT * FROM ' . $this->table . ' WHERE ' .
+            $column . ' = :value';
         $parameters = [
             'value' => $value
         ];
         $query = $this->query($query, $parameters);
-        return $query->fetch();
+        return $query->fetchAll();
     }
     private function insert($fields)
     {
@@ -65,8 +77,7 @@ class DatabaseTable
     public function delete($id)
     {
         $parameters = [':id' => $id];
-        $this->query('DELETE FROM `' . $this->table . '` WHERE
-`' . $this->primaryKey . '` = :id', $parameters);
+        $this->query('DELETE FROM `' . $this->table . '` WHERE `' . $this->primaryKey . '` = :id', $parameters);
     }
     public function findAll()
     {
@@ -76,7 +87,7 @@ class DatabaseTable
     private function processDates($fields)
     {
         foreach ($fields as $key => $value) {
-            if ($value instanceof DateTime) {
+            if ($value instanceof \DateTime) {
                 $fields[$key] = $value->format('Y-m-d');
             }
         }
@@ -89,7 +100,7 @@ class DatabaseTable
                 $record[$this->primaryKey] = null;
             }
             $this->insert($record);
-        } catch (PDOException $e) {
+        } catch (\PDOException $e) {
             $this->update($record);
         }
     }
