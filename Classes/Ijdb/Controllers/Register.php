@@ -65,7 +65,7 @@ class Register
                 ]
             ];
         }
-        include
-        __DIR__ . '/../../Templates/layout.html.php';
+        // include
+        // __DIR__ . '/../../Templates/layout.html.php';
     } 
 }

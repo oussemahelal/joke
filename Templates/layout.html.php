@@ -19,8 +19,12 @@
                     </a></li>
                 <li><a href="/joke/edit">Add a new Joke
                     </a></li>
-                    <li><a href="/author/register">Register User
-                    </a></li>
+                <?php if ($loggedIn) : ?>
+                    <li><a href="/logout">Log out</a>
+                    </li>
+                <?php else : ?>
+                    <li><a href="/login">Log in</a></li>
+                <?php endif; ?>
             </ul>
         </nav>
         <main>

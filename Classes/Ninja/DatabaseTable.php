@@ -1,5 +1,4 @@
 <?php
-
 namespace Ninja;
 
 class DatabaseTable
@@ -15,7 +14,6 @@ class DatabaseTable
     }
     private function query($sql, $parameters = [])
     {
-
         $query = $this->pdo->prepare($sql);
         $query->execute($parameters);
         return $query;
@@ -39,9 +37,7 @@ class DatabaseTable
     {
         $query = 'SELECT * FROM ' . $this->table . ' WHERE ' .
             $column . ' = :value';
-        $parameters = [
-            'value' => $value
-        ];
+        $parameters = ['value' => $value];
         $query = $this->query($query, $parameters);
         return $query->fetchAll();
     }
